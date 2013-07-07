@@ -52,8 +52,14 @@ mongoose.connect app.get 'connstr'
 console.log 'Connecting to: '+(app.get 'connstr')
 
 app.get '/', (req, res) -> res.render 'index.jade',
-  vars:
-    domain: APP_DOMAIN
+  domain: APP_DOMAIN
+  script: "if (window.location.href.indexOf('#{APP_DOMAIN}') > 0) {
+  '<head><title>Open Access Button</title><link rel=\'shortcut icon\' href=\'//#{APP_DOMAIN}/img/favicon.ico\'></head>Open Access Button';
+} else {
+  (function(){
+    document.body.appendChild(document.createElement('script')).src = '//#{APP_DOMAIN}/js/bookmarklet.js';
+  })();
+}"
 
 app.get '/about', (req, res) -> res.render 'about.jade',
   title: 'About'
