@@ -13,36 +13,8 @@ html(lang='en')
     link(rel='shortcut icon', type='image/x-icon', href='/img/favicon.ico')
     link(rel='stylesheet', href='/css/bootstrap.min.css')
     link(rel='stylesheet', href='/css/bootstrap-responsive.min.css')
-    link(rel='stylesheet', href='/css/font-awesome.min.css')
+    //- link(rel='stylesheet', href='/css/font-awesome.min.css')
     link(rel='stylesheet', href='/css/app.css')
 
-  body
-    header
-      block header
-        .navbar.navbar-inverse.navbar-fixed-top
-          .navbar-inner
-            .container
-              button.btn.btn-navbar(type='button', data-toggle='collapse', data-target='.nav-collapse')
-                span.icon-bar
-                span.icon-bar
-                span.icon-bar
-              a.brand(href='/') Open Access Button
-              .nav-collapse.collapse
-                ul.nav
-                  li: a(href='/') Home
-                  li: a(href='/stories') Stories
-                  li: a(href='/map') Map
-                  li: a(href='/about') About
-                  li: a(href='/download.json') API
-
-    // Main body
-    .container
-      block content
-
-    footer
-      block footer
-        .container
-
-    script(src='/js/jquery.min.js')
-    script(src='/js/bootstrap.js')
-    block scripts
+  body(data-spy='scroll', data-target='.bs-docs-sidebar')
+    block body
