@@ -1,0 +1,9 @@
+ * Get fonts fixed 
+      * <link href='http://fonts.googleapis.com/css?family=News+Cycle:400,700' rel='stylesheet' type='text/css'>
+css: font-family: 'News Cycle', sans-serif;
+ * fix color of bookmarklet button
+ * Fix width of button 
+ * get rid of outline border around signup form
+ * move scholarly pursuits down to bottom of map
+ * fix white background of scholarly pursuits to go 100% of width of the yellow text
+ * Style the "How this works" section with gray background and left 
