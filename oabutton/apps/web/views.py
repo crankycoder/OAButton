@@ -6,7 +6,7 @@ import json
 
 def email_verify(req, user_id):
     c = {}
-    return render_to_response('web/email_verify.html', c)
+    return render_to_response('web/email_verify.jade', c)
 
 def homepage(req):
     # Need to lazy import the Event model so that tests work with
