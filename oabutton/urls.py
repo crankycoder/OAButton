@@ -8,6 +8,10 @@ from oabutton.apps.web import views as web
 
 urlpatterns = patterns('',
                        url(r'^$', web.homepage, name="homepage"),
+                       url(r'^email_verify/(?P<user_id>.*)/$',
+                           web.email_verify, 
+                           name='email_verify'),
+
 
                        # I just jammed this in here while i sort out all the URL
                        # mappings.
@@ -15,4 +19,5 @@ urlpatterns = patterns('',
 
                        url(r'^metadata/', include(
                            'oabutton.apps.metadata.urls')),
+
                        )

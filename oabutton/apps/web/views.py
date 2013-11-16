@@ -4,6 +4,9 @@ from django.core.context_processors import csrf
 from oabutton.common import SigninForm, teamdata, thanksdata
 import json
 
+def email_verify(req, user_id):
+    c = {}
+    return render_to_response('web/email_verify.html', c)
 
 def homepage(req):
     # Need to lazy import the Event model so that tests work with
@@ -35,3 +38,4 @@ def homepage(req):
               'thanks_data': thanksdata})
 
     return render_to_response('web/start.jade', c)
+
