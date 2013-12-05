@@ -98,7 +98,7 @@ STATICFILES_FINDERS = (
 # security key thing
 import hashlib
 import random
-SECRET_KEY = hashlib.sha256("%x" % random.getrandbits(60*8)).hexdigest()
+SECRET_KEY = hashlib.sha256("%x" % random.getrandbits(60 * 8)).hexdigest()
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -143,21 +143,18 @@ TEMPLATE_DIRS = (
     # Don't forget to use absolute paths, not relative paths.
 )
 
-INSTALLED_APPS = (
+INSTALLED_APPS = [
     'django.contrib.auth',
 
     'django.contrib.contenttypes',
     'django.contrib.sessions',
 
     'django.contrib.messages',
-    'django.contrib.staticfiles',
 
-    # The Django admin assumes you're running on a RDBMS and isn't
-    # suitable for a pure MongoDB
-    # Do *not* enable it.
     'django.contrib.admin',
 
-    # The bookmarklet app is really just the REST API
+    # The bookmarklet app is both the web interface and the API
+    # break it out into a proper API section
     'oabutton.apps.bookmarklet',
 
     # The web app is the main website
@@ -166,7 +163,12 @@ INSTALLED_APPS = (
     'oabutton.apps.metadata',
 
     'south',
-)
+
+    'rest_framework',
+]
+
+if DEBUG:
+    INSTALLED_APPS.append('django.contrib.staticfiles')
 
 # A sample logging configuration. The only tangible logging
 # performed by this configuration is to send an email to
