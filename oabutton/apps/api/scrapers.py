@@ -3,7 +3,7 @@ import BeautifulSoup
 import imaplib
 import email
 
-def check_inbox():
+def check_inbox(save_callable):
     """
     Check inbound mail
     """
@@ -24,6 +24,7 @@ def check_inbox():
         print mail_dict['text']
 
         # TODO: add the record
+        save_callable(mail_dict)
 
         # Label the message as processed (only works with gmail)
         mail.uid('STORE', msg_uid, '+X-GM-LABELS', 'processed')

@@ -10,8 +10,17 @@ class OAApiKey(models.Model):
 
     date_enabled = models.DateTimeField(auto_now=False)
 
+class PendingOpen(models.Model):
+    """
+    These are requests that need to be processed into OpenDocument.
 
-class OADocument(models.Model):
+    We need to grab the DOI, scan for an email address
+    """
+    sender_email = models.EmailField(db_index=True, null=False)
+    subject = models.TextField(max_length=2000)
+    email_text = models.TextField(max_length=4000)
+
+class OpenDocument(models.Model):
     doi = models.TextField(max_length=2000)
 
     oa_url = models.URLField(max_length=2000)
