@@ -1,39 +1,40 @@
-import BeautifulSoup
-
 import imaplib
 import email
+from oabutton.apps.api.models import PendingOpen
+import json
+import requests
 
-def check_inbox(save_callable):
+
+def download_inbox():
     """
     Check inbound mail
     """
     mail = imaplib.IMAP4_SSL('imap.gmail.com')
     mail.login('oabutton@crankycoder.com', 'hackoabutton')
-    mail.select("inbox") # connect to inbox.
+    mail.select("inbox")
 
-    result, data = mail.uid('search', None, "ALL") # search and return uids instead
-    # the result should always come back with 'OK'
-    uids = data[0].split()
-    for msg_uid in uids:
-        raw_email = load_mail_by_uid(mail, msg_uid)
-        mail_dict = process_raw_email(raw_email)
-        print "--------"
-        print "From: %s <%s>" % mail_dict['from']
-        print "To: %s <%s>" % mail_dict['to']
-        print "Subject: %s" % mail_dict['subject']
-        print mail_dict['text']
+    result, data = mail.uid('search', None, "ALL")
+    for msg_uid in data[0].split():
 
-        # TODO: add the record
-        save_callable(mail_dict)
+        result, data = mail.uid('fetch', msg_uid, '(RFC822)')
+        raw_email = data[0][1]
+
+        mail_dict = _process_raw_email(raw_email)
+
+        PendingOpen.objects.create(sender_email="%s <%s>" % mail_dict['from'],
+                                   subject=mail_dict['subject'],
+                                   email_text=mail_dict['text'],
+                                   email_headers=json.dumps(mail_dict['headers']))
 
         # Label the message as processed (only works with gmail)
         mail.uid('STORE', msg_uid, '+X-GM-LABELS', 'processed')
 
         # Mark the message as deleted (which is basically archived)
-        mail.uid('STORE', msg_uid, '+FLAGS', '(\Deleted)')
+        # TODO: uncomment this
+        #mail.uid('STORE', msg_uid, '+FLAGS', '(\Deleted)')
 
 
-def process_raw_email(raw_email):
+def _process_raw_email(raw_email):
     """
     Return a dictionary with the following keys:
     """
@@ -42,11 +43,12 @@ def process_raw_email(raw_email):
     result['to'] = email.utils.parseaddr(email_message['To'])
     result['from'] = email.utils.parseaddr(email_message['From'])
     result['subject'] = email_message['Subject']
-    result['headers'] = email_message.items() # print all headers
-    result['text'] = extract_text(email_message)
+    result['headers'] = email_message.items()
+    result['text'] = _extract_text(email_message)
     return result
 
-def extract_text(email_message_instance):
+
+def _extract_text(email_message_instance):
     maintype = email_message_instance.get_content_maintype()
     if maintype == 'multipart':
         for part in email_message_instance.get_payload():
@@ -56,13 +58,30 @@ def extract_text(email_message_instance):
         return email_message_instance.get_payload()
 
 
-def load_mail_by_uid(mail, uid):
-    """return the raw email"""
-    result, data = mail.uid('fetch', uid, '(RFC822)')
-    return data[0][1]
+def process_event(evt):
+    """
+    We dequeue from PendingOpen and process each record.
 
-def scrape_email(html_text):
+    That means:
+
+    1. Check against dx.doi.org for the canonical resource
+    2. Scan the canonical resource for all email addresses
+    3. Check if any of them match against the sender email
+    4. On match:
+        a) set a verification secret on PendingOpen
+        b) send back a reply email asking the author to verify that
+           this is the correct link
+    5. On click, we need to create the OpenDocument record
+    """
+
+    # 1. check again dx.doi.org
+    url = "http://data.crossref.org/%s" % evt.doi
+    headers = {'Accept': "application/json"}
+    r = requests.get(url, headers=headers)
+    import pdb
+    pdb.set_trace()
+    jdata = json.loads(r.text)
     pass
 
-check_inbox()
+
 

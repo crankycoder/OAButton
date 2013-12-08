@@ -19,13 +19,15 @@ class PendingOpen(models.Model):
     sender_email = models.EmailField(db_index=True, null=False)
     subject = models.TextField(max_length=2000)
     email_text = models.TextField(max_length=4000)
+    email_headers = models.TextField(max_length=4000, null=False, default="")
 
 class OpenDocument(models.Model):
     doi = models.TextField(max_length=2000)
 
     oa_url = models.URLField(max_length=2000)
 
-    primary_author_email = models.EmailField(db_index=True, null=False)
+    release_email = models.EmailField(db_index=True, null=False)
+
     date_opened = models.DateTimeField()
 
     # Presumably, we'd be able to get some kind of canonical
