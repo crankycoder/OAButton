@@ -14,14 +14,22 @@ def check_inbox():
     result, data = mail.uid('search', None, "ALL") # search and return uids instead
     # the result should always come back with 'OK'
     uids = data[0].split()
-    for uid in uids:
-        raw_email = load_mail_by_uid(mail, uid)
+    for msg_uid in uids:
+        raw_email = load_mail_by_uid(mail, msg_uid)
         mail_dict = process_raw_email(raw_email)
         print "--------"
         print "From: %s <%s>" % mail_dict['from']
         print "To: %s <%s>" % mail_dict['to']
         print "Subject: %s" % mail_dict['subject']
         print mail_dict['text']
+
+        # TODO: add the record
+
+        # Label the message as processed (only works with gmail)
+        mail.uid('STORE', msg_uid, '+X-GM-LABELS', 'processed')
+
+        # Mark the message as deleted (which is basically archived)
+        mail.uid('STORE', msg_uid, '+FLAGS', '(\Deleted)')
 
 
 def process_raw_email(raw_email):
