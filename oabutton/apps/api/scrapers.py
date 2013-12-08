@@ -75,13 +75,57 @@ def process_event(evt):
     """
 
     # 1. check again dx.doi.org
-    url = "http://data.crossref.org/%s" % evt.doi
+
+    doi = ''.join(evt.subject.split()[2:])
+
+    url = "http://data.crossref.org/%s" % doi
     headers = {'Accept': "application/json"}
     r = requests.get(url, headers=headers)
-    import pdb
-    pdb.set_trace()
     jdata = json.loads(r.text)
+    canon_url = jdata['feed']['entry']['pam:message']['pam:article']['prism:url']
+
+    # TODO: replace this with a call to ghost.py and phantom.js
+    """
+    r = requests.get(canon_url)
+    text = r.text
+    match = re.search(r'\w+@\w+', text)
+    if match:
+        print match.group()
+    """
+    possible_emails = ['gelvin@purdue.edu', ]
+
+    if evt.sender_email in possible_emails:
+        # Success!
+        # TODO: change this to a proper md5 secret or something. I
+        # don't really care
+        evt.verification_secret = "some_secret_text"
+        evt.save()
+
+        send_confirmation_email(evt.sender_email, doi, evt.verification_secret)
+
+    else:
+        # No author email match available.
+
+        # Send an email back to the sender that the request was
+        # rejected, flag the record
+        evt.rejected=True
+        evt.save()
+
+def send_confirmation_email(to_email, doi, secret):
+    """
+    Send a confirmation email to add the document to the repository
+    """
+    from django.core.mail import send_mail
+    msg = []
+
+    msg.append("Click this link to add DOI %s to the repository" % doi)
+    msg.append("http://localhost:8000/rest/v1/add_doc/%s" % secret)
+
+    msg = '\n'.join(msg)
+
+    send_mail("Your document is about to be added to the OAButton",
+            msg, 'oabutton@crankycoder,com', [to_email], fail_silently=False)
+
+
     pass
-
-
 

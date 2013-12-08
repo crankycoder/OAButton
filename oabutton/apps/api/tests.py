@@ -19,8 +19,6 @@ class SimpleTest(TestCase):
 
         (author_email, DOI, and open access URL)
         """
-        import pdb
-        pdb.set_trace()
         for evt in PendingOpen.objects.all():
             process_event(evt)
 

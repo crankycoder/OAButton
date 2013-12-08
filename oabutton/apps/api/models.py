@@ -21,6 +21,10 @@ class PendingOpen(models.Model):
     email_text = models.TextField(max_length=4000)
     email_headers = models.TextField(max_length=4000, null=False, default="")
 
+    verification_secret = models.TextField(max_length=40, null=False)
+
+    rejected = models.BooleanField(default=False)
+
 class OpenDocument(models.Model):
     doi = models.TextField(max_length=2000)
 

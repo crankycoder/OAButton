@@ -13,6 +13,9 @@ urlpatterns = patterns('',
                        # mappings.
                        url(r'^api/', include('oabutton.apps.bookmarklet.urls', namespace='bookmarklet')),
 
+                       url(r'^rest/v1', include('oabutton.apps.api.urls', namespace='bookmarklet')),
+
+
                        url(r'^metadata/', include(
                            'oabutton.apps.metadata.urls')),
 
