@@ -21,7 +21,7 @@ class PendingOpen(models.Model):
     email_text = models.TextField(max_length=4000)
     email_headers = models.TextField(max_length=4000, null=False, default="")
 
-    verification_secret = models.TextField(max_length=40, null=False)
+    verification_secret = models.TextField(max_length=80, null=False, db_index=True)
 
     rejected = models.BooleanField(default=False)
 

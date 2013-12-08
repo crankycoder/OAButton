@@ -4,6 +4,11 @@ from oabutton.apps.api.models import PendingOpen
 import json
 import requests
 
+import hashlib
+import random
+
+from django.core.mail import send_mail
+
 
 def download_inbox():
     """
@@ -94,11 +99,12 @@ def process_event(evt):
     """
     possible_emails = ['gelvin@purdue.edu', ]
 
-    if evt.sender_email in possible_emails:
+    if evt.sender_email in possible_emails or \
+       'victor@crankycoder.com' in evt.sender_email:  # This is a debug option obviously
         # Success!
         # TODO: change this to a proper md5 secret or something. I
         # don't really care
-        evt.verification_secret = "some_secret_text"
+        evt.verification_secret = hashlib.sha256("%x" % random.getrandbits(60 * 8)).hexdigest()
         evt.save()
 
         send_confirmation_email(evt.sender_email, doi, evt.verification_secret)
@@ -108,6 +114,14 @@ def process_event(evt):
 
         # Send an email back to the sender that the request was
         # rejected, flag the record
+
+        # TODO: throttle mails to the user in the case of forged
+        # sender address
+        send_mail("Your submission was not accepted", 
+                  "Your request to submit DOI: %s was denied." % doi,
+                  'oabutton@crankycoder,com', [evt.sender_email],
+                  fail_silently=True)
+
         evt.rejected=True
         evt.save()
 
@@ -115,17 +129,14 @@ def send_confirmation_email(to_email, doi, secret):
     """
     Send a confirmation email to add the document to the repository
     """
-    from django.core.mail import send_mail
     msg = []
 
-    msg.append("Click this link to add DOI %s to the repository" % doi)
-    msg.append("http://localhost:8000/rest/v1/add_doc/%s" % secret)
+    msg.append("Click this link to confirm adding DOI %s to the repository" % doi)
+    msg.append("http://localhost:8000/rest/v1/add_doc/%s/" % secret)
 
     msg = '\n'.join(msg)
 
     send_mail("Your document is about to be added to the OAButton",
             msg, 'oabutton@crankycoder,com', [to_email], fail_silently=False)
 
-
-    pass
 
