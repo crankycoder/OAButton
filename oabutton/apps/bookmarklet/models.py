@@ -17,7 +17,7 @@ class OAEvent(models.Model):
     coords = property(_get_coords, _set_coords)
 
     accessed = models.DateTimeField()
-    doi = models.TextField()
+    doi = models.TextField(max_length=2000)
     url = models.URLField(max_length=2000)
     story = models.TextField(null=True, blank=True)
     description = models.TextField()
@@ -27,6 +27,10 @@ class OAEvent(models.Model):
     user_email = models.EmailField()
     user_name = models.CharField(max_length=200)
     user_profession = models.CharField(max_length=200)
+
+    # turn this true when the person is notified of availability
+    notified_as_available = models.BooleanField(default=False)
+
 
 
 class OAUser(models.Model):

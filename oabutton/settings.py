@@ -147,7 +147,12 @@ INSTALLED_APPS = [
     # The web app is the main website
     'oabutton.apps.web',
 
+    # This is for CORE. I think.  bah.
     'oabutton.apps.metadata',
+
+    # Our new API interface
+    'oabutton.apps.api',
+
 
     'south',
 

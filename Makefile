@@ -11,7 +11,7 @@ lessc:
 test: test_js test_py
 
 test_py:
-	python manage.py test web bookmarklet metadata
+	python manage.py test web bookmarklet metadata api
 
 test_js:
 	phantomjs scripts/qunit-runner.js oabutton/static/test/test.html

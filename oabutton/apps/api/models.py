@@ -1,0 +1,28 @@
+from django.db import models
+
+
+class OAApiKey(models.Model):
+    owner_email = models.EmailField(db_index=True, null=False)
+    api_key = models.TextField(max_length=40, null=False)
+
+    date_requested = models.DateTimeField(auto_now=True)
+    verification_secret = models.TextField(max_length=40, null=False)
+
+    date_enabled = models.DateTimeField(auto_now=False)
+
+
+class OADocument(models.Model):
+    doi = models.TextField(max_length=2000)
+
+    oa_url = models.URLField(max_length=2000)
+
+    primary_author_email = models.EmailField(db_index=True, null=False)
+    date_opened = models.DateTimeField()
+
+    # Presumably, we'd be able to get some kind of canonical
+    # repository for papers that comply with immediate deposit
+    # mandate.
+    # Details:
+    #   http://openaccess.eprints.org/index.php?/archives/249-OA-Mandates,-Embargoes,-and-the-Fair-Use-Button.html
+    #   http://openscience.com/green-open-access-on-the-move/
+    # We should probably add that here
