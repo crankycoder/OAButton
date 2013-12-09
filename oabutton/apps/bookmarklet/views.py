@@ -136,7 +136,12 @@ def form3(req, key, slug):
     event = OAEvent.objects.get(id=data['event_id'])
 
     c = {}
+
+    # TODO: make a call to inject the snippet to show the open access
+    # version of a document here
+
     c.update({'scholar_url': scholar_url, 'doi': doi, 'url': event.url})
+
     return render_to_response('bookmarklet/page3.html', c,
                               context_instance=RequestContext(req))
 
