@@ -12,6 +12,7 @@ import json
 import requests
 import uuid
 import datetime
+from oabutton.apps.api.models import OpenDocument
 
 
 @csrf_exempt
@@ -136,11 +137,13 @@ def form3(req, key, slug):
     event = OAEvent.objects.get(id=data['event_id'])
 
     c = {}
-
-    # TODO: make a call to inject the snippet to show the open access
-    # version of a document here
-
     c.update({'scholar_url': scholar_url, 'doi': doi, 'url': event.url})
+
+
+    # TODO: this is dirty and needs cleanup
+    open_records = OpenDocument.objects.filter(doi = doi)
+    if open_records.count():
+        c.update({"open_url": open_records[0].oa_url})
 
     return render_to_response('bookmarklet/page3.html', c,
                               context_instance=RequestContext(req))
