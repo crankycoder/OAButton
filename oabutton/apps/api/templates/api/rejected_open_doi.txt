@@ -1,0 +1,8 @@
+We couldn't find your email address on the page at {{ canon_url }} for
+DOI : {{ doi }}
+
+We currently only allow adding open access documents when an author
+email address can be verified.
+
+If you are an author of this paper and this document should be linked
+- please email us directly @ oabutton@openaccessbutton.com

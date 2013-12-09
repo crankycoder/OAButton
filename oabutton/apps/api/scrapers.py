@@ -1,4 +1,5 @@
 from django.core.mail import send_mail
+from django.conf import settings
 from django.template import Context
 from django.template.loader import get_template
 from oabutton.apps.api.grab_page import load_page
@@ -101,8 +102,8 @@ def process_event(evt):
 
         tmpl = get_template("open_confirmation_email.txt")
 
-        # TODO: add a mailchimp template here
-        msg = tmpl.render(Context({'doi': doi, 'secret': evt.verification_secret}))
+        url = settings.HOSTNAME + reverse("demo:add_doc", kwargs={'secret':  evt.verification_secret})
+        msg = tmpl.render(Context({'doi': doi, 'add_doc_link': url}))
 
         send_mail("Your document is about to be added to the OAButton",
                   msg,
@@ -120,7 +121,7 @@ def process_event(evt):
         # mailchimp
         tmpl = get_template("rejected_open_doi.txt")
 
-        msg = tmpl.render(Context({'doi': doi}))
+        msg = tmpl.render(Context({'doi': doi, 'canon_url': canon_url}))
 
         send_mail("Your submission was not accepted",
                   msg,

@@ -1,0 +1,5 @@
+We received a request to provide a link to provide open access to DOI
+{{ doi }} from your email address.
+
+If this is correct, please verify by clicking on the following link: {{ add_doc_link }}
+
