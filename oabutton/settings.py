@@ -154,6 +154,9 @@ INSTALLED_APPS = [
     'oabutton.apps.api',
 
 
+    # Our new API interface
+    'oabutton.apps.quickstart',
+
     'south',
 
     'rest_framework',
@@ -222,3 +225,11 @@ SESSION_SAVE_EVERY_REQUEST = False
 
 # Use persistent sessions in the database
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+
+# REST Framework stuff
+
+REST_FRAMEWORK = {
+        'DEFAULT_PERMISSION_CLASSES': ('rest_framework.permissions.IsAdminUser',),
+        'PAGINATE_BY': 10
+        }
