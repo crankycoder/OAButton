@@ -1,13 +1,14 @@
-import imaplib
-import email
-from oabutton.apps.api.models import PendingOpen
-import json
-import requests
-
-import hashlib
-import random
-
 from django.core.mail import send_mail
+from django.template import Context
+from django.template.loader import get_template
+from oabutton.apps.api.grab_page import load_page
+from oabutton.apps.api.models import PendingOpen
+import email
+import hashlib
+import imaplib
+import json
+import random
+import requests
 
 
 def download_inbox():
@@ -89,54 +90,42 @@ def process_event(evt):
     jdata = json.loads(r.text)
     canon_url = jdata['feed']['entry']['pam:message']['pam:article']['prism:url']
 
-    # TODO: replace this with a call to ghost.py and phantom.js
-    """
-    r = requests.get(canon_url)
-    text = r.text
-    match = re.search(r'\w+@\w+', text)
-    if match:
-        print match.group()
-    """
-    possible_emails = ['gelvin@purdue.edu', ]
+    possible_emails = load_page(canon_url)
 
     if evt.sender_email in possible_emails or \
        'victor@crankycoder.com' in evt.sender_email:  # This is a debug option obviously
-        # Success!
-        # TODO: change this to a proper md5 secret or something. I
-        # don't really care
+        # Success!, send the confirmation email back to the original
+        # sender and make
         evt.verification_secret = hashlib.sha256("%x" % random.getrandbits(60 * 8)).hexdigest()
         evt.save()
 
-        send_confirmation_email(evt.sender_email, doi, evt.verification_secret)
+        tmpl = get_template("open_confirmation_email.txt")
 
+        # TODO: add a mailchimp template here
+        msg = tmpl.render(Context({'doi': doi, 'secret': evt.verification_secret}))
+
+        send_mail("Your document is about to be added to the OAButton",
+                  msg,
+                  'oabutton@crankycoder,com',
+                  [evt.sender_email],
+                  fail_silently=False)
     else:
         # No author email match available.
-
         # Send an email back to the sender that the request was
         # rejected, flag the record
 
         # TODO: throttle mails to the user in the case of forged
         # sender address
-        send_mail("Your submission was not accepted", 
-                  "Your request to submit DOI: %s was denied." % doi,
+        # TODO: generate a rejected open DOI email template with
+        # mailchimp
+        tmpl = get_template("rejected_open_doi.txt")
+
+        msg = tmpl.render(Context({'doi': doi}))
+
+        send_mail("Your submission was not accepted",
+                  msg,
                   'oabutton@crankycoder,com', [evt.sender_email],
                   fail_silently=True)
 
-        evt.rejected=True
+        evt.rejected = True
         evt.save()
-
-def send_confirmation_email(to_email, doi, secret):
-    """
-    Send a confirmation email to add the document to the repository
-    """
-    msg = []
-
-    msg.append("Click this link to confirm adding DOI %s to the repository" % doi)
-    msg.append("http://localhost:8000/rest/v1/add_doc/%s/" % secret)
-
-    msg = '\n'.join(msg)
-
-    send_mail("Your document is about to be added to the OAButton",
-            msg, 'oabutton@crankycoder,com', [to_email], fail_silently=False)
-
-

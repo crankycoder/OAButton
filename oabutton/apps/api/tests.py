@@ -9,6 +9,7 @@ from django.test import TestCase
 
 from oabutton.apps.api.scrapers import process_event
 from oabutton.apps.api.models import PendingOpen
+from oabutton.apps.api.grab_page import load_page
 
 class SimpleTest(TestCase):
     fixtures = ['inbound.json']
@@ -19,8 +20,16 @@ class SimpleTest(TestCase):
 
         (author_email, DOI, and open access URL)
         """
+
         for evt in PendingOpen.objects.all():
             process_event(evt)
+
+    def test_load_javascript_scrambled_emails(self):
+        # TODO: change this to use a local file URL instead of making
+        # a network call
+        url = "http://stke.sciencemag.org/cgi/content/abstract/sigtrans;6/302/ra100"
+        emails = load_page(url)
+        assert "gelvin@purdue.edu" in emails
 
 #    def test_inbound_webcall():
 #        """
