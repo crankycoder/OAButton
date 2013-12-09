@@ -1,0 +1,25 @@
+{% extends "api/layout.html" %}
+{% load oafilters %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="logo ">
+            <img id="bookmarklet-logo" src="/static/img/oabutton_logo.png" alt="Open Access Logo" />
+        </div>
+    </div>
+</div>
+
+<p>
+Your document at {{ url }} has been registered as an open access version
+of DOI: {{ doi }}.
+</p>
+
+<p>
+You can verify inspect the record by using our API here: {{ hostname }}{{ api_url }}
+</p>
+
+<p>
+Thanks!
+</p>
+
+{% endblock %}

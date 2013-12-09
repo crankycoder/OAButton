@@ -13,6 +13,8 @@ urlpatterns = patterns('',
                        # mappings.
                        url(r'^api/', include('oabutton.apps.bookmarklet.urls', namespace='bookmarklet')),
 
+                       url(r'^demo/', include('oabutton.apps.api.urls', namespace='demo')),
+
                        url(r'^rest/', include('oabutton.apps.quickstart.urls')),
 
                        url(r'^api-auth/',
